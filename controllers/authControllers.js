@@ -7,7 +7,6 @@ const registerUser = async (req, res, next) => {
       return res.status(400).json({ error: "Name, email, and password are required" });
     }
 
-    // Buat user di Firebase Authentication
     const userRecord = await auth.createUser({
       email,
       password,
@@ -18,7 +17,6 @@ const registerUser = async (req, res, next) => {
       throw new Error("User ID is undefined");
     }
 
-    // Simpan user ke Firestore
     await db.collection("users").doc(userRecord.uid).set({
       id: userRecord.uid,
       name,
