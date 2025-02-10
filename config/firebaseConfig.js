@@ -1,17 +1,18 @@
-const admin = require("firebase-admin");
-const path = require("path");
+import admin from "firebase-admin";
+import dotenv from "dotenv";
+import path from "path";
 
-// Cek apakah Firebase sudah diinisialisasi
+dotenv.config();
+
+const serviceAccountPath = path.resolve(process.env.GOOGLE_APPLICATION_CREDENTIALS);
+
 if (!admin.apps.length) {
-  const serviceAccountPath = path.join(__dirname, "../firebase.json");
-  const serviceAccount = require(serviceAccountPath);
-
   admin.initializeApp({
-    credential: admin.credential.cert(serviceAccount),
+    credential: admin.credential.cert(serviceAccountPath),
   });
 }
 
 const db = admin.firestore();
-const auth = admin.auth();
+const authAdmin = admin.auth();
 
-module.exports = { db, auth };
+export { db, authAdmin };

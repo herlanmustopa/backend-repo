@@ -1,5 +1,7 @@
-const { auth, db } = require("../config/firebaseConfig");
-const jwt = require("jsonwebtoken");
+import { authAdmin, db } from "../config/firebaseConfig.js"; 
+import jwt from "jsonwebtoken";
+
+
 const registerUser = async (req, res, next) => {
   try {
     const { name, email, password } = req.body;
@@ -7,7 +9,7 @@ const registerUser = async (req, res, next) => {
       return res.status(400).json({ error: "Name, email, and password are required" });
     }
 
-    const userRecord = await auth.createUser({
+    const userRecord = await authAdmin.createUser({
       email,
       password,
       displayName: name,
@@ -31,19 +33,21 @@ const registerUser = async (req, res, next) => {
   }
 };
 
-const loginUser = async (req, res, next) => {
+const loginUser = async (req, res) => {
   try {
-    const { email, password } = req.body;
+    const { idToken } = req.body;
 
-    if (!email || !password) {
-      return res.status(400).json({ error: "Email and password are required" });
+    if (!idToken) {
+      return res.status(400).json({ error: "ID Token is required" });
     }
-    const user = await auth.getUserByEmail(email);
+    const decodedToken = await authAdmin.verifyIdToken(idToken);
+    const user = await authAdmin.getUser(decodedToken.uid);
 
     if (!user) {
-      return res.status(401).json({ error: "Invalid email or password" });
+      return res.status(401).json({ error: "Invalid user" });
     }
 
+    // 🔹 Buat JWT Token untuk sesi login
     const token = jwt.sign(
       { uid: user.uid, email: user.email, name: user.displayName },
       process.env.JWT_SECRET,
@@ -53,7 +57,7 @@ const loginUser = async (req, res, next) => {
     res.status(200).json({ message: "Login successful", token, user });
   } catch (error) {
     console.error("Error Logging In:", error.message);
-    res.status(401).json({ error: "Invalid email or password" });
+    res.status(401).json({ error: "Invalid or expired token" });
   }
 };
 
@@ -76,4 +80,4 @@ const getAllUsers = async (req, res) => {
   };
 
 
-module.exports = { registerUser, loginUser, getAllUsers };
+export { registerUser, loginUser, getAllUsers };
