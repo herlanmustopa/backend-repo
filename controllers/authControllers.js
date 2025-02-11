@@ -47,7 +47,6 @@ const loginUser = async (req, res) => {
       return res.status(401).json({ error: "Invalid user" });
     }
 
-    // 🔹 Buat JWT Token untuk sesi login
     const token = jwt.sign(
       { uid: user.uid, email: user.email, name: user.displayName },
       process.env.JWT_SECRET,

@@ -3,6 +3,8 @@ const express = require("express");
 const cors = require("cors");
 const { db, auth } = require("./config/firebaseConfig"); // **Import hanya dari config/firebase.js**
 const authRoutes = require("./routes/authRoutes");
+const userRoutes = require("./routes/userRoutes");
+
 // const errorHandler = require("./middlewares/errorHandler");
 
 const app = express();
@@ -13,6 +15,8 @@ app.use(express.json());
 
 // Routes
 app.use("/api/auth", authRoutes);
+app.use("/api", userRoutes);
+
 
 // Global Error Handling Middleware
 // app.use(errorHandler);
