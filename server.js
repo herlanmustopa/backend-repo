@@ -1,7 +1,7 @@
 require("dotenv").config();
 const express = require("express");
 const cors = require("cors");
-const { db, auth } = require("./config/firebaseConfig"); // **Import hanya dari config/firebase.js**
+const { db, auth } = require("./config/firebaseConfig");
 const authRoutes = require("./routes/authRoutes");
 const userRoutes = require("./routes/userRoutes");
 
